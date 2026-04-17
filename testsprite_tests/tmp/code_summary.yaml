@@ -1,0 +1,182 @@
+version: "2"
+type: frontend
+tech_stack:
+  - TypeScript
+  - Next.js App Router
+  - React
+  - Recharts
+  - lucide-react
+  - Fastify API backend
+routes:
+  - path: /
+    file: apps/dashboard/src/app/page.tsx
+    auth_required: false
+    description: Overview dashboard with aggregate usage, costs, token chart, recent calls, and SDK quick start sample.
+  - path: /memory
+    file: apps/dashboard/src/app/memory/page.tsx
+    auth_required: false
+    description: Memory store browser with user ID search, category filters, single-memory delete, and GDPR bulk delete prompt flow.
+  - path: /sessions
+    file: apps/dashboard/src/app/sessions/page.tsx
+    auth_required: false
+    description: Conversation sessions table with expandable session message history.
+  - path: /prompts
+    file: apps/dashboard/src/app/prompts/page.tsx
+    auth_required: false
+    description: Prompt template list and version history view with deploy and rollback controls.
+  - path: /debugger
+    file: apps/dashboard/src/app/debugger/page.tsx
+    auth_required: false
+    description: Context debugger with call timeline and detailed payload inspector.
+  - path: /analytics
+    file: apps/dashboard/src/app/analytics/page.tsx
+    auth_required: false
+    description: Analytics page with daily token chart, cost-by-model chart, cost breakdown table, and CSV export.
+  - path: /settings
+    file: apps/dashboard/src/app/settings/page.tsx
+    auth_required: false
+    description: Project settings UI for API key reveal/copy, LLM provider/model, memory/compression, budget, and privacy fields.
+features:
+  - name: Overview Metrics
+    description: Displays high-level LLM usage, cost, recent call, and token usage chart data for the last 30 days.
+    files:
+      - apps/dashboard/src/app/page.tsx
+      - apps/dashboard/src/lib/api.ts
+    entry_route: /
+    user_interactions:
+      - Open the Overview route.
+      - Review total calls, total tokens, total cost, and memory status cards.
+      - Inspect the token usage chart.
+      - Review recent call rows or the empty state.
+      - Read the SDK quick start code sample.
+    api_calls:
+      - method: GET
+        endpoint: /v1/analytics/usage
+      - method: GET
+        endpoint: /v1/analytics/costs
+      - method: GET
+        endpoint: /v1/analytics/calls
+    auth_required: false
+  - name: Memory Management
+    description: Lets users view memories, filter by user ID or category, delete individual memories, and bulk-delete user memories.
+    files:
+      - apps/dashboard/src/app/memory/page.tsx
+      - apps/dashboard/src/lib/api.ts
+    entry_route: /memory
+    user_interactions:
+      - Open the Memory route.
+      - Type a user ID in the filter input and press Enter.
+      - Click category filter chips for All, personal, preference, goal, and context.
+      - Click a memory delete icon and confirm deletion.
+      - Click GDPR Delete, enter a user ID, and confirm bulk deletion.
+    api_calls:
+      - method: GET
+        endpoint: /v1/memories
+      - method: DELETE
+        endpoint: /v1/memories/:id
+      - method: DELETE
+        endpoint: /v1/memories
+    auth_required: false
+  - name: Session History
+    description: Shows conversation sessions and allows expanding a session to load its message history.
+    files:
+      - apps/dashboard/src/app/sessions/page.tsx
+      - apps/dashboard/src/lib/api.ts
+    entry_route: /sessions
+    user_interactions:
+      - Open the Sessions route.
+      - Review the session table or empty state.
+      - Click a session row to expand it.
+      - Review user and assistant messages.
+      - Click the expanded row again to collapse it.
+    api_calls:
+      - method: GET
+        endpoint: /v1/sessions
+      - method: GET
+        endpoint: /v1/sessions/:id/messages
+    auth_required: false
+  - name: Prompt Version Control
+    description: Displays prompt templates, template versions, deployment state, deploy actions, and rollback actions.
+    files:
+      - apps/dashboard/src/app/prompts/page.tsx
+      - apps/dashboard/src/lib/api.ts
+    entry_route: /prompts
+    user_interactions:
+      - Open the Prompts route.
+      - Select a prompt template from the template list.
+      - Review version content, variables, deployment labels, and timestamps.
+      - Click Deploy on a non-production version.
+      - Click Rollback on an eligible version and confirm.
+    api_calls:
+      - method: GET
+        endpoint: /v1/prompts
+      - method: GET
+        endpoint: /v1/prompts/:id/versions
+      - method: PATCH
+        endpoint: /v1/prompts/:id/versions/:vid
+      - method: POST
+        endpoint: /v1/prompts/:id/rollback
+    auth_required: false
+  - name: Context Debugger
+    description: Displays recent LLM calls and lets users inspect token breakdown, context payload, and response payload.
+    files:
+      - apps/dashboard/src/app/debugger/page.tsx
+      - apps/dashboard/src/lib/api.ts
+    entry_route: /debugger
+    user_interactions:
+      - Open the Debugger route.
+      - Review the call timeline or empty state.
+      - Click a call in the timeline.
+      - Inspect prompt and completion token bars.
+      - Review JSON context and response payloads.
+    api_calls:
+      - method: GET
+        endpoint: /v1/analytics/calls
+      - method: GET
+        endpoint: /v1/analytics/calls/:id
+    auth_required: false
+  - name: Analytics Reporting
+    description: Shows usage, cost charts, cost breakdown rows, and exports model cost data as CSV.
+    files:
+      - apps/dashboard/src/app/analytics/page.tsx
+      - apps/dashboard/src/lib/api.ts
+    entry_route: /analytics
+    user_interactions:
+      - Open the Analytics route.
+      - Review total cost, model count, and period cards.
+      - Inspect daily token usage and cost-by-model charts.
+      - Review the cost breakdown table.
+      - Click Export CSV.
+    api_calls:
+      - method: GET
+        endpoint: /v1/analytics/usage
+      - method: GET
+        endpoint: /v1/analytics/costs
+    auth_required: false
+  - name: Project Settings
+    description: Provides local settings controls for API key display/copy, model/provider selection, memory settings, budget, and privacy fields.
+    files:
+      - apps/dashboard/src/app/settings/page.tsx
+    entry_route: /settings
+    user_interactions:
+      - Open the Settings route.
+      - Click Reveal and Hide for the API key.
+      - Click Copy for the API key.
+      - Change provider and model select values.
+      - Edit memory, compression, budget, and mask field inputs.
+      - Click Save Changes.
+    api_calls: []
+    auth_required: false
+known_limitations:
+  - issue: Dashboard authentication is not implemented; a demo API key is read from localStorage or hard-coded fallback.
+    location: apps/dashboard/src/lib/api.ts
+    impact: Test cases should not expect a login flow.
+  - issue: Settings page stores changes only in local React state and the Save Changes button has no persistence handler.
+    location: apps/dashboard/src/app/settings/page.tsx
+    impact: Settings changes do not persist after navigation or reload.
+  - issue: Prompt creation UI is not present despite API helper methods existing.
+    location: apps/dashboard/src/app/prompts/page.tsx
+    impact: Test cases should focus on listing/selecting/deploying/rollback, not creating new templates.
+  - issue: Memory creation UI is not present despite API helper methods existing.
+    location: apps/dashboard/src/app/memory/page.tsx
+    impact: Test cases should create memories through backend setup or existing seed data, not through the dashboard.

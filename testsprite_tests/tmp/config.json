@@ -1,0 +1,20 @@
+{
+  "status": "init",
+  "scope": "codebase",
+  "type": "frontend",
+  "localEndpoint": "http://localhost:3006/",
+  "serverPort": 38615,
+  "executionArgs": {
+    "projectName": "contextos",
+    "projectPath": "/home/vannd1/workspaces/u30/contextos",
+    "testIds": [
+      "TC013"
+    ],
+    "additionalInstruction": "Run only TC013 against the Dockerized app at http://localhost:3006 with API at http://localhost:3005. Non-draft prompt deployment badges now render '<environment> · Deployed'. Clicking Deploy on a staging version keeps it in staging and shows 'staging · Deployed'.",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-lXN7I2JOgYym-1fU8SwugOYUUMQNqub59PmfpK0j3PxaEC2nB4UulbHFaC57udh24YcR3_4UVifwTqqlglw6sd4nLwDfuKWNZWPEIMuZ_-grS-wcgnH-4Jl-etVUtDjYXAY"
+    }
+  },
+  "proxy": "http://111782aa-4e27-4134-9c73-d6a6fe1f63e7:n7vqnTIHI1pHcGoz8AY4g4rgEjUhi1NW@tun.testsprite.com:8080"
+}
