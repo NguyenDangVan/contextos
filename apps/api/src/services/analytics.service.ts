@@ -90,7 +90,11 @@ export async function getCallLogs(
     query = query.where('session_id', options.sessionId);
   }
 
-  const total = await query.clone().count('id as count').first();
+  const countQuery = db('call_logs').where('project_id', projectId);
+  if (options.sessionId) {
+    countQuery.where('session_id', options.sessionId);
+  }
+  const total = await countQuery.count('id as count').first();
   const logs = await query
     .limit(options.limit || 50)
     .offset(options.offset || 0);
