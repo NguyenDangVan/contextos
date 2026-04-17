@@ -96,14 +96,25 @@ export default async function promptRoutes(fastify: FastifyInstance) {
       return reply.code(404).send({ error: 'Template not found' });
     }
 
-    const updates: any = {};
-    if (body.deployment) updates.deployment = body.deployment;
-    if (body.canary_pct !== undefined) updates.canary_pct = body.canary_pct;
+    const updated = await db.transaction(async (trx) => {
+      const updates: any = {};
+      if (body.deployment) updates.deployment = body.deployment;
+      if (body.canary_pct !== undefined) updates.canary_pct = body.canary_pct;
 
-    const [updated] = await db('prompt_versions')
-      .where({ id: versionId, template_id: id })
-      .update(updates)
-      .returning('*');
+      if (body.deployment === 'production') {
+        await trx('prompt_versions')
+          .where({ template_id: id, deployment: 'production' })
+          .whereNot({ id: versionId })
+          .update({ deployment: 'draft' });
+      }
+
+      const [version] = await trx('prompt_versions')
+        .where({ id: versionId, template_id: id })
+        .update(updates)
+        .returning('*');
+
+      return version;
+    });
 
     if (!updated) {
       return reply.code(404).send({ error: 'Version not found' });

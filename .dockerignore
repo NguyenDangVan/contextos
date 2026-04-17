@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+.next
+**/.next
+dist
+**/dist
+.git
+.env.local
+testsprite_tests/tmp
+npm-debug.log*
+Dockerfile
+docker-compose.override.yml

@@ -1,15 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { BarChart3, Brain, MessageSquare, DollarSign, Zap, TrendingUp } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function OverviewPage() {
+  const router = useRouter();
   const [usage, setUsage] = useState<any>(null);
   const [costs, setCosts] = useState<any>(null);
   const [calls, setCalls] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingCalls, setLoadingCalls] = useState(true);
 
   useEffect(() => {
     const now = new Date();
@@ -25,6 +28,7 @@ export default function OverviewPage() {
       setCosts(c);
       setCalls(cl);
       setLoading(false);
+      setLoadingCalls(false);
     });
   }, []);
 
@@ -89,7 +93,11 @@ export default function OverviewPage() {
           </thead>
           <tbody>
             {calls?.logs?.map((log: any) => (
-              <tr key={log.id}>
+              <tr
+                key={log.id}
+                onClick={() => router.push(`/debugger?callId=${log.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
                 <td><span className="badge badge-purple">{log.model}</span></td>
                 <td>{log.total_tokens?.toLocaleString()}</td>
                 <td>${Number(log.cost_usd || 0).toFixed(4)}</td>
@@ -97,7 +105,10 @@ export default function OverviewPage() {
                 <td>{new Date(log.created_at).toLocaleTimeString()}</td>
               </tr>
             ))}
-            {(!calls?.logs || calls.logs.length === 0) && (
+            {loadingCalls && (
+              <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 40 }}>Loading recent calls...</td></tr>
+            )}
+            {!loadingCalls && (!calls?.logs || calls.logs.length === 0) && (
               <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 40 }}>No calls yet. Send your first chat request!</td></tr>
             )}
           </tbody>

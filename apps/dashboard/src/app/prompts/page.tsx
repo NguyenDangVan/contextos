@@ -6,17 +6,28 @@ import { FileCode2, Plus, GitBranch, Rocket, RotateCcw } from 'lucide-react';
 
 export default function PromptsPage() {
   const [templates, setTemplates] = useState<any[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(true);
   const [selected, setSelected] = useState<any>(null);
   const [versions, setVersions] = useState<any[]>([]);
+  const [loadingVersions, setLoadingVersions] = useState(false);
 
   useEffect(() => {
-    api.getPrompts().then(d => setTemplates(d.templates || [])).catch(console.error);
+    api.getPrompts()
+      .then(d => setTemplates(d.templates || []))
+      .catch(console.error)
+      .finally(() => setLoadingTemplates(false));
   }, []);
 
   const selectTemplate = async (t: any) => {
     setSelected(t);
-    const data = await api.getPromptVersions(t.id);
-    setVersions(data.versions || []);
+    setVersions([]);
+    setLoadingVersions(true);
+    try {
+      const data = await api.getPromptVersions(t.id);
+      setVersions(data.versions || []);
+    } finally {
+      setLoadingVersions(false);
+    }
   };
 
   const deploy = async (templateId: string, versionId: string, deployment: string) => {
@@ -54,7 +65,12 @@ export default function PromptsPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600 }}>Templates</h3>
           </div>
-          {templates.map((t: any) => (
+          {loadingTemplates && (
+            <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 20, fontSize: 13 }}>
+              Loading templates...
+            </div>
+          )}
+          {!loadingTemplates && templates.map((t: any) => (
             <div
               key={t.id}
               onClick={() => selectTemplate(t)}
@@ -74,7 +90,7 @@ export default function PromptsPage() {
               )}
             </div>
           ))}
-          {templates.length === 0 && (
+          {!loadingTemplates && templates.length === 0 && (
             <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 20, fontSize: 13 }}>
               No templates yet
             </div>
@@ -88,10 +104,16 @@ export default function PromptsPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
                 <GitBranch size={16} style={{ color: 'var(--accent-primary)' }} />
                 <h3 style={{ fontSize: 16, fontWeight: 600 }}>{selected.name}</h3>
-                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>· {versions.length} versions</span>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>· {loadingVersions ? 'Loading versions...' : `${versions.length} versions`}</span>
               </div>
 
-              {versions.map((v: any, i: number) => (
+              {loadingVersions && (
+                <div className="empty-state" style={{ padding: 40 }}>
+                  Loading versions...
+                </div>
+              )}
+
+              {!loadingVersions && versions.map((v: any, i: number) => (
                 <div key={v.id} style={{
                   padding: '16px 20px', marginBottom: 12,
                   background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)',
@@ -100,14 +122,21 @@ export default function PromptsPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       <code style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-accent)' }}>v{v.version}</code>
-                      <span className={`badge badge-${deploymentColor(v.deployment)}`}>{v.deployment}</span>
+                      <span className={`badge badge-${deploymentColor(v.deployment)}`}>
+                        {v.deployment === 'draft' ? 'draft' : `${v.deployment} · Deployed`}
+                      </span>
                       {v.deployment === 'canary' && v.canary_pct > 0 && (
                         <span className="badge badge-gray">{v.canary_pct}% traffic</span>
                       )}
                     </div>
                     <div style={{ display: 'flex', gap: 6 }}>
                       {v.deployment !== 'production' && (
-                        <button className="btn btn-sm btn-secondary" onClick={() => deploy(selected.id, v.id, 'production')}>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-secondary"
+                          aria-label={`Deploy version ${v.version}`}
+                          onClick={() => deploy(selected.id, v.id, v.deployment === 'draft' ? 'staging' : v.deployment)}
+                        >
                           <Rocket size={12} /> Deploy
                         </button>
                       )}
@@ -127,6 +156,12 @@ export default function PromptsPage() {
                   </div>
                 </div>
               ))}
+
+              {!loadingVersions && versions.length === 0 && (
+                <div className="empty-state" style={{ padding: 40 }}>
+                  No versions found
+                </div>
+              )}
             </>
           ) : (
             <div className="empty-state" style={{ paddingTop: 80 }}>

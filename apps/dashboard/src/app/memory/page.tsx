@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+import { useCallback, useEffect, useState } from 'react';
+import { api, isDemoApiKey } from '@/lib/api';
 import { Brain, Trash2, Search, Shield } from 'lucide-react';
 
 export default function MemoryPage() {
@@ -9,30 +9,65 @@ export default function MemoryPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(true);
+  const [gdprOpen, setGdprOpen] = useState(false);
+  const [gdprUserId, setGdprUserId] = useState('');
+  const [gdprDeleting, setGdprDeleting] = useState(false);
+  const [demoDeletedUsers, setDemoDeletedUsers] = useState<string[]>([]);
 
-  const loadMemories = () => {
+  const loadMemories = useCallback(() => {
     setLoading(true);
     const params = new URLSearchParams();
-    if (search) params.set('userId', search);
+    const userId = search.trim();
+    if (isDemoApiKey() && userId && demoDeletedUsers.includes(userId)) {
+      setData({ memories: [], total: 0 });
+      setLoading(false);
+      return;
+    }
+    if (userId) params.set('userId', userId);
     if (category) params.set('category', category);
     params.set('limit', '50');
     api.getMemories(params.toString()).then(setData).catch(console.error).finally(() => setLoading(false));
-  };
+  }, [category, demoDeletedUsers, search]);
 
-  useEffect(() => { loadMemories(); }, [category]);
+  useEffect(() => {
+    const timer = setTimeout(loadMemories, 250);
+    return () => clearTimeout(timer);
+  }, [loadMemories]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this memory?')) return;
+    if (isDemoApiKey()) {
+      setData((current: any) => {
+        const memories = current.memories.filter((memory: any) => memory.id !== id);
+        return { memories, total: Math.max(0, Number(current.total || 0) - 1) };
+      });
+      return;
+    }
     await api.deleteMemory(id);
     loadMemories();
   };
 
+  const openGDPR = () => {
+    setGdprUserId(search.trim());
+    setGdprOpen(true);
+  };
+
   const handleGDPR = async () => {
-    const userId = prompt('Enter user ID to delete all memories (GDPR):');
+    const userId = gdprUserId.trim();
     if (!userId) return;
-    if (!confirm(`Delete ALL memories for "${userId}"? This cannot be undone.`)) return;
-    await api.deleteAllMemories(userId);
-    loadMemories();
+    setGdprDeleting(true);
+    try {
+      if (!isDemoApiKey()) {
+        await api.deleteAllMemories(userId);
+      } else {
+        setDemoDeletedUsers((users) => users.includes(userId) ? users : [...users, userId]);
+      }
+      setGdprOpen(false);
+      setSearch(userId);
+      setData({ memories: [], total: 0 });
+    } finally {
+      setGdprDeleting(false);
+    }
   };
 
   const categories = ['personal', 'preference', 'goal', 'context'];
@@ -44,7 +79,7 @@ export default function MemoryPage() {
           <h2>Memory Store</h2>
           <p>View and manage extracted user memories</p>
         </div>
-        <button className="btn btn-secondary btn-sm" onClick={handleGDPR}>
+        <button className="btn btn-secondary btn-sm" onClick={openGDPR}>
           <Shield size={14} /> GDPR Delete
         </button>
       </div>
@@ -122,7 +157,7 @@ export default function MemoryPage() {
               </tr>
             ))}
             {data.memories.length === 0 && (
-              <tr><td colSpan={5} className="empty-state">No memories found</td></tr>
+              <tr><td colSpan={5} className="empty-state">{loading ? 'Loading memories...' : 'No memories found'}</td></tr>
             )}
           </tbody>
         </table>
@@ -132,6 +167,61 @@ export default function MemoryPage() {
           </div>
         )}
       </div>
+
+      {gdprOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="gdpr-title"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 50,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(2, 6, 23, 0.72)',
+            padding: 24,
+          }}
+        >
+          <div className="card" style={{ width: '100%', maxWidth: 420 }}>
+            <h3 id="gdpr-title" style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>GDPR Delete</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 16 }}>
+              Delete all memories for a user ID. This action cannot be undone.
+            </p>
+            <label style={{ display: 'block', fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6 }}>
+              User ID
+            </label>
+            <input
+              type="text"
+              autoFocus
+              placeholder="alex"
+              value={gdprUserId}
+              onChange={(e) => setGdprUserId(e.target.value)}
+              style={{
+                width: '100%', padding: '10px 14px', background: 'var(--bg-input)',
+                border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)',
+                color: 'var(--text-primary)', fontSize: 14, fontFamily: 'inherit', outline: 'none',
+                marginBottom: 16,
+              }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <button className="btn btn-secondary btn-sm" onClick={() => setGdprOpen(false)} disabled={gdprDeleting}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                aria-label="Delete Memories"
+                onClick={handleGDPR}
+                disabled={gdprDeleting}
+              >
+                {gdprDeleting ? 'Deleting...' : 'Delete Memories'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

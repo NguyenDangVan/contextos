@@ -11,8 +11,13 @@ export default function DebuggerPage() {
 
   useEffect(() => {
     api.getCalls('limit=30').then(d => {
-      setCalls(d.logs || []);
+      const logs = d.logs || [];
+      setCalls(logs);
       setTotal(d.total || 0);
+      const callId = new URLSearchParams(window.location.search).get('callId');
+      if (callId && logs.some((call: any) => call.id === callId)) {
+        inspectCall(callId);
+      }
     }).catch(console.error);
   }, []);
 

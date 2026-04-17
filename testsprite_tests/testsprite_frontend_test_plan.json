@@ -1,0 +1,919 @@
+[
+  {
+    "id": "TC001",
+    "title": "Cross-page landing observability journey into the debugger",
+    "description": "Verifies a user can go from the overview page into the debugger and inspect a call’s token breakdown and JSON payloads.",
+    "category": "Overview Metrics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the recent calls section to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click a recent call row"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to open the debugger"
+      },
+      {
+        "type": "action",
+        "description": "Select the same call in the debugger timeline or list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a prompt/completion token breakdown is displayed for the selected call"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify JSON context and response payloads are displayed for the selected call"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "View 30-day overview diagnostics",
+    "description": "Verifies the overview page loads aggregate usage/cost summary cards, a 30-day token usage chart, and either recent calls or an empty state.",
+    "category": "Overview Metrics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the overview content to finish loading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify aggregate usage and cost summary cards are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a 30-day token usage chart is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a recent calls list is displayed or an empty state is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Inspect a call to view token breakdown and JSON payloads",
+    "description": "Verifies that a user can select a call from the timeline and view token breakdown and JSON context/response payloads for the selected call.",
+    "category": "Context Debugger",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /debugger"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the call timeline area to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click a call in the timeline"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the call details panel to finish loading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify prompt and completion token breakdown information is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify JSON context and response payloads are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Overview diagnostics render with metrics and recent calls list",
+    "description": "Verifies that the overview page loads 30-day summary metrics, a token trend chart, and the recent calls section.",
+    "category": "Context Debugger",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the overview metrics section to finish loading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify usage/cost/calls summary metrics are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a 30-day token trend chart and a recent calls section are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Complete privacy deletion workflow end-to-end",
+    "description": "Verifies a user can filter memories for a user, delete one memory, then perform GDPR bulk deletion for the same user and see the filtered list become empty.",
+    "category": "Memory Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /memory"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid user ID into the user ID filter field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the user ID filter"
+      },
+      {
+        "type": "action",
+        "description": "Select a non-All category chip"
+      },
+      {
+        "type": "action",
+        "description": "Click the delete control for one memory item"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the single-memory deletion"
+      },
+      {
+        "type": "action",
+        "description": "Open the GDPR bulk delete flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill the same user ID into the GDPR user ID field"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the bulk deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the memory list shows an empty state for that user ID and selected category after the workflow completes"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Open a recent call from the overview list",
+    "description": "Verifies a user can select a recent call from the overview page and view call-related details in the UI.",
+    "category": "Overview Metrics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the recent calls section to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click a recent call row"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected call’s details view is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify call payload information is displayed for the selected call"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Perform GDPR bulk delete for a user with confirmation",
+    "description": "Verifies a user can bulk-delete all memories for a given user ID using the GDPR delete flow and the list refreshes afterward.",
+    "category": "Memory Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /memory"
+      },
+      {
+        "type": "action",
+        "description": "Open the GDPR bulk delete flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid user ID into the GDPR user ID field"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the bulk deletion"
+      },
+      {
+        "type": "action",
+        "description": "Fill the same user ID into the main user ID filter field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the user ID filter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the memory list shows an empty state for that user ID after the bulk delete"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Filter memories by user ID and category",
+    "description": "Verifies a user can filter the memory list by developer user ID and then narrow results using category chips.",
+    "category": "Memory Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /memory"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid user ID into the user ID filter field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the user ID filter"
+      },
+      {
+        "type": "action",
+        "description": "Select a non-All category chip"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the memory list updates to show only memories matching the selected filters or an empty state for those filters"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "View template versions and metadata for a selected prompt",
+    "description": "Verifies that a user can select a prompt template and view its immutable versions, variables, labels, and timestamps.",
+    "category": "Prompt Version Control",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /prompts"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the prompt template list to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click a prompt template in the list"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the versions panel to finish loading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a list of prompt versions is displayed for the selected template"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify version details show content and metadata such as variables, labels, and timestamps"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Delete a single memory with confirmation",
+    "description": "Verifies a user can delete an individual memory and the list updates after confirming the deletion.",
+    "category": "Memory Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /memory"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid user ID into the user ID filter field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the user ID filter"
+      },
+      {
+        "type": "action",
+        "description": "Click the delete control for one memory item"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the single-memory deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the memory list refreshes and the deleted memory item is no longer present"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Switch between calls and update inspected details",
+    "description": "Verifies that selecting a different call updates the displayed token breakdown and JSON payloads to match the newly selected call.",
+    "category": "Context Debugger",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /debugger"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the call timeline area to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click a call in the timeline"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the call details panel to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click a different call in the timeline"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the call details panel to finish loading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the call details view updates to reflect the newly selected call"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "View sessions list and expand/collapse a session",
+    "description": "Verifies a user can view the session table (or empty state), expand a session to load messages, read them, and collapse the session.",
+    "category": "Session History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /sessions"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the sessions list to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click a session row to expand it"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the message history to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click the expanded session row to collapse it"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user and assistant messages are displayed when expanded"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the message history is hidden after collapsing"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Deploy a non-production prompt version and see deployment state update",
+    "description": "Verifies that deploying a non-production version updates the UI to reflect the new deployment state for the selected environment.",
+    "category": "Prompt Version Control",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /prompts"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the prompt template list to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click a prompt template in the list"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the versions panel to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click the deploy action for a non-production version"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the deploy operation to complete"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected version shows an updated deployment label or state indicating it is deployed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "Analytics charts and cost breakdown table render for selected period",
+    "description": "Verifies that the analytics page loads summary cards, usage/cost charts, and a cost breakdown table for the current selected period.",
+    "category": "Analytics Reporting",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /analytics"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the analytics summary section to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the charts section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify daily token usage and cost-by-model charts are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a cost breakdown table with rows is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Rollback to a previous eligible version with confirmation",
+    "description": "Verifies that a user can rollback to a previous eligible version and the UI updates to reflect the rollback result.",
+    "category": "Prompt Version Control",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /prompts"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the prompt template list to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click a prompt template in the list"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the versions panel to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click the rollback action for an eligible version"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the rollback"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the deployment state updates to reflect the rolled back version"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "Inspect message history for two different sessions",
+    "description": "Verifies a user can expand one session to read its messages, collapse it, then expand a different session and see that session’s messages.",
+    "category": "Session History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /sessions"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the sessions list to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click a session row to expand it"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the message history to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click the expanded session row to collapse it"
+      },
+      {
+        "type": "action",
+        "description": "Click a different session row to expand it"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the message history to finish loading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify message history is displayed for the second expanded session"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC017",
+    "title": "Export model cost data as CSV",
+    "description": "Verifies that exporting from analytics triggers a CSV download that contains tabular model cost data for the selected period.",
+    "category": "Analytics Reporting",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /analytics"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the cost breakdown table to finish loading"
+      },
+      {
+        "type": "action",
+        "description": "Click the export action to download CSV"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a CSV file download is initiated"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the downloaded CSV contains rows consistent with the visible cost breakdown table"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC018",
+    "title": "Edit and locally save project settings values",
+    "description": "Verifies a user can change provider/model and edit settings fields then save and see the updated values reflected in the UI.",
+    "category": "Project Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Select a different LLM provider value"
+      },
+      {
+        "type": "action",
+        "description": "Select a different model value"
+      },
+      {
+        "type": "action",
+        "description": "Fill a new value into the memory-related numeric field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a new value into the compression-related numeric field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a new value into the budget-related numeric field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a new value into the privacy mask field"
+      },
+      {
+        "type": "action",
+        "description": "Click Save Changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected provider and model values remain set to the new selections"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the edited settings input fields display the newly entered values"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC019",
+    "title": "Inspect SDK quick start sample",
+    "description": "Verifies the overview page shows an SDK quick start sample so developers can copy the integration pattern.",
+    "category": "Overview Metrics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the SDK quick start section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an SDK quick start code sample is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC020",
+    "title": "Handle no usage data on the overview page",
+    "description": "Verifies the overview page shows an empty state when there is no usage data available instead of failing or rendering broken charts.",
+    "category": "Overview Metrics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the overview content to finish loading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty state is displayed for usage and/or recent calls when no data is available"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC021",
+    "title": "Reveal and hide the API key",
+    "description": "Verifies a user can toggle API key visibility on and off and the UI updates accordingly.",
+    "category": "Project Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Reveal the API key"
+      },
+      {
+        "type": "action",
+        "description": "Hide the API key"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the API key is not visible in clear text after hiding"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC022",
+    "title": "Copy the API key to clipboard with confirmation",
+    "description": "Verifies a user can copy the API key and sees an in-app confirmation that the copy action occurred.",
+    "category": "Project Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Reveal the API key"
+      },
+      {
+        "type": "action",
+        "description": "Copy the API key"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a clipboard copy confirmation is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC023",
+    "title": "Show empty state when no calls are available",
+    "description": "Verifies that when there are no logged calls, the debugger shows an empty state instead of a broken timeline.",
+    "category": "Context Debugger",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /debugger"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the timeline section to finish loading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty state is visible for the call timeline"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC024",
+    "title": "GDPR bulk delete blocks submission when user ID is empty",
+    "description": "Verifies the GDPR bulk delete flow prevents deletion when the user ID field is empty and shows a blocking validation error.",
+    "category": "Memory Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /memory"
+      },
+      {
+        "type": "action",
+        "description": "Open the GDPR bulk delete flow"
+      },
+      {
+        "type": "action",
+        "description": "Submit the bulk delete form with the user ID field empty"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a user ID validation error is displayed and deletion does not proceed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC025",
+    "title": "Handle empty analytics state without breaking charts/table",
+    "description": "Verifies that when analytics returns no data, the page shows an empty or zero-data state without broken UI.",
+    "category": "Analytics Reporting",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /analytics"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the analytics content to finish loading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty or zero-data state is displayed for analytics visuals"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC026",
+    "title": "Reject invalid numeric input in budget or memory fields",
+    "description": "Verifies the UI prevents or flags invalid numeric input for numeric settings fields so the user cannot save nonsensical values.",
+    "category": "Project Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Fill non-numeric text into a numeric settings field such as budget or memory limit"
+      },
+      {
+        "type": "action",
+        "description": "Click Save Changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a validation error is visible or the numeric field does not accept the invalid value"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC027",
+    "title": "Settings reset after navigating away and returning",
+    "description": "Verifies that settings changes do not persist after leaving the page and coming back, returning to default/initial values.",
+    "category": "Project Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Select a different LLM provider value"
+      },
+      {
+        "type": "action",
+        "description": "Fill a new value into the budget-related numeric field"
+      },
+      {
+        "type": "action",
+        "description": "Click Save Changes"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to go to the overview dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to return to settings"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the provider selection has reset to its initial value"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the budget field has reset to its initial value"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC028",
+    "title": "Settings reset after page reload",
+    "description": "Verifies that settings changes do not persist after a browser reload and the settings return to initial values.",
+    "category": "Project Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Select a different model value"
+      },
+      {
+        "type": "action",
+        "description": "Fill a new value into the memory-related numeric field"
+      },
+      {
+        "type": "action",
+        "description": "Click Save Changes"
+      },
+      {
+        "type": "action",
+        "description": "Reload the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the model selection has reset to its initial value"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the memory-related numeric field has reset to its initial value"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC029",
+    "title": "Save changes with empty optional text privacy fields",
+    "description": "Verifies a user can clear optional privacy text inputs and save without the UI getting stuck, and the cleared state is reflected.",
+    "category": "Project Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Clear the privacy mask field"
+      },
+      {
+        "type": "action",
+        "description": "Click Save Changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the privacy mask field remains empty after saving"
+      }
+    ],
+    "priority": "Low"
+  }
+]

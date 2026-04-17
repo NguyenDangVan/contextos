@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -38,11 +36,59 @@ services:
       - qdrant_data:/qdrant/storage
     environment:
       QDRANT__SERVICE__GRPC_PORT: 6334
+
+  migrate-seed:
+    build:
+      context: .
+    working_dir: /app/apps/api
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/contextos
+    command: >
+      sh -c "node --import tsx /app/node_modules/knex/bin/cli.js migrate:latest --knexfile knexfile.ts &&
+             node --import tsx /app/node_modules/knex/bin/cli.js seed:run --knexfile knexfile.ts"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+    working_dir: /app
+    command: npm run dev --workspace=@contextos/api
+    ports:
+      - "3005:3005"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/contextos
+      REDIS_URL: redis://redis:6379
+      QDRANT_URL: http://qdrant:6333
+      API_PORT: 3005
+      API_HOST: 0.0.0.0
+    depends_on:
+      migrate-seed:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
-      interval: 5s
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3005/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+
+  dashboard:
+    build:
+      context: .
+    working_dir: /app
+    command: npm run dev --workspace=dashboard -- -H 0.0.0.0 -p 3006
+    ports:
+      - "3006:3006"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3005/v1
+      PORT: 3006
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   postgres_data:

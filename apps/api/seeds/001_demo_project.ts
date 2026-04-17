@@ -34,7 +34,7 @@ export async function seed(knex: Knex): Promise<void> {
   // Create demo app user
   const [appUser] = await knex('app_users').insert({
     project_id: project.id,
-    external_id: 'user_demo_001',
+    external_id: 'alex',
     metadata: JSON.stringify({ name: 'Alex Demo', plan: 'starter' }),
   }).returning('*');
 
@@ -52,6 +52,18 @@ export async function seed(knex: Knex): Promise<void> {
     { session_id: session.id, role: 'assistant', content: 'Hello Alex! Nice to meet you. How can I help you today?', token_count: 14 },
     { session_id: session.id, role: 'user', content: 'I prefer dark mode and concise answers.', token_count: 9 },
     { session_id: session.id, role: 'assistant', content: 'Got it! I\'ll keep my responses brief and to the point. What would you like to know?', token_count: 18 },
+  ]);
+
+  const [secondSession] = await knex('sessions').insert({
+    project_id: project.id,
+    app_user_id: appUser.id,
+    turn_count: 2,
+    token_count: 420,
+  }).returning('*');
+
+  await knex('messages').insert([
+    { session_id: secondSession.id, role: 'user', content: 'Can you summarize my plan for this week?', token_count: 10 },
+    { session_id: secondSession.id, role: 'assistant', content: 'You want concise planning help and prefer dark-mode interfaces.', token_count: 12 },
   ]);
 
   // Create demo memories
@@ -89,7 +101,7 @@ export async function seed(knex: Knex): Promise<void> {
     description: 'A helpful customer support chatbot prompt',
   }).returning('*');
 
-  await knex('prompt_versions').insert([
+  const promptVersions = await knex('prompt_versions').insert([
     {
       template_id: template.id,
       version: '1.0.0',
@@ -103,6 +115,52 @@ export async function seed(knex: Knex): Promise<void> {
       content: 'You are a friendly customer support assistant for {productName}. Address the user by {userName} when possible. Keep answers concise.',
       variables: JSON.stringify(['productName', 'userName']),
       deployment: 'production',
+    },
+  ]).returning('*');
+
+  const stagingPromptVersion = promptVersions.find((version) => version.deployment === 'staging') || promptVersions[0];
+  const productionPromptVersion = promptVersions.find((version) => version.deployment === 'production') || promptVersions[1];
+
+  await knex('call_logs').insert([
+    {
+      project_id: project.id,
+      session_id: session.id,
+      app_user_id: appUser.id,
+      prompt_version_id: productionPromptVersion.id,
+      model: 'gpt-4o-mini',
+      messages_payload: JSON.stringify([
+        { role: 'system', content: productionPromptVersion.content },
+        { role: 'user', content: 'I prefer dark mode and concise answers.' },
+      ]),
+      response_payload: JSON.stringify({
+        role: 'assistant',
+        content: 'Got it. I will keep answers concise and remember your dark mode preference.',
+      }),
+      prompt_tokens: 82,
+      completion_tokens: 21,
+      total_tokens: 103,
+      latency_ms: 420,
+      cost_usd: '0.0008',
+    },
+    {
+      project_id: project.id,
+      session_id: secondSession.id,
+      app_user_id: appUser.id,
+      prompt_version_id: stagingPromptVersion.id,
+      model: 'gpt-4o-mini',
+      messages_payload: JSON.stringify([
+        { role: 'system', content: stagingPromptVersion.content },
+        { role: 'user', content: 'What do you remember about me?' },
+      ]),
+      response_payload: JSON.stringify({
+        role: 'assistant',
+        content: 'You are Alex, prefer dark mode, and like concise answers.',
+      }),
+      prompt_tokens: 74,
+      completion_tokens: 18,
+      total_tokens: 92,
+      latency_ms: 380,
+      cost_usd: '0.0007',
     },
   ]);
 
@@ -126,9 +184,9 @@ export async function seed(knex: Knex): Promise<void> {
       project_id: project.id,
       date: dateStr,
       model: 'gpt-4o-mini',
-      total_tokens: Math.floor(Math.random() * 50000) + 10000,
-      total_calls: Math.floor(Math.random() * 200) + 50,
-      total_cost_usd: (Math.random() * 2 + 0.5).toFixed(4),
+      total_tokens: 10000 + i * 6500,
+      total_calls: 50 + i * 18,
+      total_cost_usd: (0.5 + i * 0.25).toFixed(4),
     });
   }
 
@@ -136,4 +194,6 @@ export async function seed(knex: Knex): Promise<void> {
   console.log(`   API Key: ${apiKey}`);
   console.log(`   Project: ${project.name} (${project.id})`);
   console.log(`   App User: ${appUser.external_id} (${appUser.id})`);
+  console.log(`   Sessions: ${session.id}, ${secondSession.id}`);
+  console.log(`   Call Logs: 2`);
 }

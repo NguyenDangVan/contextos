@@ -3,6 +3,10 @@ const API_KEY = typeof window !== 'undefined'
   ? localStorage.getItem('contextos_api_key') || 'ctx_demo_key_2026_hackathon_testsprite'
   : 'ctx_demo_key_2026_hackathon_testsprite';
 
+export function isDemoApiKey(): boolean {
+  return API_KEY === 'ctx_demo_key_2026_hackathon_testsprite';
+}
+
 async function request<T>(method: string, path: string, body?: any): Promise<T> {
   const url = `${API_BASE}${path}`;
   const res = await fetch(url, {
