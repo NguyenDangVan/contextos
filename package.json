@@ -16,7 +16,8 @@
     "db:rollback": "cd apps/api && npx knex migrate:rollback",
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
-    "docker:logs": "docker compose logs -f api dashboard"
+    "docker:logs": "docker compose logs -f api dashboard",
+    "mcp:start": "npm run start --workspace=@contextos/mcp-server"
   },
   "devDependencies": {
     "turbo": "^2.3.0"

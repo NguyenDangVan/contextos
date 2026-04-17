@@ -151,6 +151,35 @@ const usage = await ctx.analytics.usage('2026-04-01', '2026-04-17');
 const costs = await ctx.analytics.costs('2026-04-01', '2026-04-17');
 ```
 
+## 🔌 MCP Server Integration
+
+ContextOS includes a **Model Context Protocol (MCP)** server, allowing you to seamlessly integrate with Claude Desktop, Cursor, Codex, or any MCP-compatible AI agent. The AI can natively use ContextOS memory and analytics features without writing any API integration code.
+
+### 1. Start the MCP Server
+Make sure the main ContextOS API is running (via `docker compose` or locally), then run:
+```bash
+npm run mcp:start
+```
+
+### 2. Configure Claude Desktop
+Add ContextOS to your `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "contextos": {
+      "command": "node",
+      "args": ["--import", "tsx", "/ABSOLUTE_PATH_TO/contextos/apps/mcp-server/src/index.ts"],
+      "env": {
+        "CONTEXTOS_API_URL": "http://localhost:3005",
+        "CONTEXTOS_API_KEY": "ctx_demo_key_2026_hackathon_testsprite"
+      }
+    }
+  }
+}
+```
+
+Now you can simply ask Claude: *"Remember that I prefer TypeScript"* and it will use ContextOS!
+
 ## 🗂️ Project Structure
 
 ```
@@ -163,8 +192,9 @@ contextos/
 │   │   │   ├── workers/  # BullMQ background workers
 │   │   │   └── middleware/ # Auth
 │   │   └── migrations/   # PostgreSQL schema (10 tables)
-│   └── dashboard/        # Next.js 14 admin UI
-│       └── src/app/      # Pages: Overview, Memory, Sessions, Prompts, Debugger, Analytics, Settings
+│   ├── dashboard/        # Next.js 14 admin UI
+│   │   └── src/app/      # Pages: Overview, Memory, Sessions, Prompts, Debugger, Analytics, Settings
+│   └── mcp-server/       # Model Context Protocol server
 ├── packages/
 │   └── sdk/              # TypeScript SDK (zero runtime deps)
 └── docker-compose.yml    # PostgreSQL + Redis + Qdrant
