@@ -1,4 +1,4 @@
-<![CDATA[# ContextOS — The Memory Layer for LLM Apps
+# ContextOS — The Memory Layer for LLM Apps
 
 > Drop-in SDK + Dashboard that gives every LLM app **persistent memory**, **cost optimization**, and **full observability** — in under 10 minutes.
 
@@ -207,4 +207,3 @@ When no LLM API keys are configured, ContextOS automatically operates in **mock 
 ## 📄 License
 
 MIT © ContextOS Team
-]]>
