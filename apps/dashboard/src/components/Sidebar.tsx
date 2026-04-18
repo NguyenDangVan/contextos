@@ -6,6 +6,7 @@ import {
   LayoutDashboard, Brain, MessageSquare, FileCode2,
   Bug, BarChart3, Settings, Zap
 } from 'lucide-react';
+import { getStoredApiKey, maskApiKey } from '@/lib/api-key';
 
 const navItems = [
   { label: 'Overview', href: '/', icon: LayoutDashboard },
@@ -19,6 +20,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const apiKey = maskApiKey(getStoredApiKey());
 
   return (
     <aside className="sidebar">
@@ -55,7 +57,7 @@ export function Sidebar() {
       }}>
         <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>API Key</div>
         <code style={{ fontSize: '11px', color: 'var(--text-accent)', wordBreak: 'break-all' }}>
-          ctx_demo...sprite
+          {apiKey}
         </code>
       </div>
     </aside>

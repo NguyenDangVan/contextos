@@ -1,10 +1,8 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005/v1';
-const API_KEY = typeof window !== 'undefined'
-  ? localStorage.getItem('contextos_api_key') || 'ctx_demo_key_2026_hackathon_testsprite'
-  : 'ctx_demo_key_2026_hackathon_testsprite';
+import { DEMO_API_KEY, getStoredApiKey } from './api-key';
 
 export function isDemoApiKey(): boolean {
-  return API_KEY === 'ctx_demo_key_2026_hackathon_testsprite';
+  return getStoredApiKey() === DEMO_API_KEY;
 }
 
 async function request<T>(method: string, path: string, body?: any): Promise<T> {
@@ -12,7 +10,7 @@ async function request<T>(method: string, path: string, body?: any): Promise<T> 
   const res = await fetch(url, {
     method,
     headers: {
-      'Authorization': `Bearer ${API_KEY}`,
+      'Authorization': `Bearer ${getStoredApiKey()}`,
       'Content-Type': 'application/json',
     },
     body: body ? JSON.stringify(body) : undefined,
