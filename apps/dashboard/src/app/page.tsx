@@ -44,43 +44,44 @@ export default function OverviewPage() {
 
   return (
     <>
-      <div className="page-header">
+      <div className="page-header animate-in">
         <div>
           <h2>Overview</h2>
           <p>Your LLM app performance at a glance</p>
         </div>
       </div>
 
-      <div className="stats-grid">
-        <StatCard icon={<BarChart3 size={20} />} label="Total Calls" value={totalCalls.toLocaleString()} change="+12%" />
-        <StatCard icon={<Zap size={20} />} label="Total Tokens" value={formatTokens(totalTokens)} change="+8%" />
-        <StatCard icon={<DollarSign size={20} />} label="Total Cost" value={`$${totalCost.toFixed(2)}`} change="-5%" positive={false} />
+      <div className="stats-grid animate-in delay-100">
+        <StatCard icon={<BarChart3 size={20} />} label="Total Calls" value={totalCalls.toLocaleString()} change={totalCalls > 0 ? "+12%" : undefined} />
+        <StatCard icon={<Zap size={20} />} label="Total Tokens" value={formatTokens(totalTokens)} change={totalTokens > 0 ? "+8%" : undefined} />
+        <StatCard icon={<DollarSign size={20} />} label="Total Cost" value={`$${totalCost.toFixed(2)}`} change={totalCost > 0 ? "-5%" : undefined} positive={false} />
         <StatCard icon={<Brain size={20} />} label="Memories" value="—" change="Active" />
       </div>
 
-      <div className="chart-container">
+      <div className="chart-container animate-in delay-200">
         <h3>Token Usage (Last 30 Days)</h3>
         <ResponsiveContainer width="100%" height={280}>
           <AreaChart data={chartData}>
             <defs>
               <linearGradient id="colorTokens" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
+                <stop offset="5%" stopColor="#6366F1" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="#06B6D4" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
-            <YAxis stroke="#64748b" fontSize={12} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+            <XAxis dataKey="date" stroke="#71717A" fontSize={12} tickLine={false} axisLine={false} />
+            <YAxis stroke="#71717A" fontSize={12} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} tickLine={false} axisLine={false} />
             <Tooltip
-              contentStyle={{ background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#f1f5f9' }}
-              labelStyle={{ color: '#94a3b8' }}
+              contentStyle={{ background: 'rgba(15, 15, 15, 0.8)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', color: '#EDEDED', backdropFilter: 'blur(20px)' }}
+              labelStyle={{ color: '#A1A1AA', marginBottom: '8px' }}
+              itemStyle={{ color: '#6366F1', fontWeight: 600 }}
             />
-            <Area type="monotone" dataKey="tokens" stroke="#7c3aed" fill="url(#colorTokens)" strokeWidth={2} />
+            <Area type="monotone" dataKey="tokens" stroke="url(#colorTokens)" fill="url(#colorTokens)" strokeWidth={3} />
           </AreaChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="card" style={{ marginBottom: 24 }}>
-        <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Recent Calls</h3>
+      <div className="card animate-in delay-300" style={{ marginBottom: 40 }}>
+        <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 24, letterSpacing: '-0.02em' }}>Recent Calls</h3>
         <table className="data-table">
           <thead>
             <tr>
@@ -115,9 +116,10 @@ export default function OverviewPage() {
         </table>
       </div>
 
-      <div className="card">
-        <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Quick Start</h3>
+      <div className="card animate-in delay-400">
+        <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 24, letterSpacing: '-0.02em' }}>Quick Start</h3>
         <div className="code-block">
+          <button className="copy-btn" onClick={() => navigator.clipboard.writeText('import { ContextOS } from \'@contextos/sdk\'')}>Copy</button>
           <code>
 {`import { ContextOS } from '@contextos/sdk';
 
